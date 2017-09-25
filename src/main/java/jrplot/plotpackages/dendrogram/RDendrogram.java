@@ -1,0 +1,163 @@
+/************************************************************************** 
+ * Orlando Rocha (ornrocha@gmail.com)
+ *
+ * This is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU Public License as published by 
+ * the Free Software Foundation, either version 3 of the License, or 
+ * (at your option) any later version. 
+ * 
+ * This code is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU Public License for more details. 
+ * 
+ * You should have received a copy of the GNU Public License 
+ * along with this code. If not, see http://www.gnu.org/licenses/ 
+ *  
+ */
+package jrplot.plotpackages.dendrogram;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+
+import org.apache.commons.io.FilenameUtils;
+
+import hu.kazocsaba.imageviewer.ImageViewer;
+import jrplot.functioncallers.hclust.IRHClustFunction;
+import jrplot.functioncallers.hclust.RHierarchicalclusterFunction;
+import jrplot.plotpackages.common.figure.RPlotFigureMakerLibrary;
+import jrplot.rbinders.components.dataframe.DefaultDataframeContainer;
+import jrplot.rbinders.components.dataframe.datatype.DoubleDataColumn;
+import jrplot.rbinders.components.dataframe.datatype.rownames.StringColumnRowNames;
+import jrplot.rbinders.components.interfaces.IDataLoader;
+import pt.ornrocha.logutils.MTULogLevel;
+import pt.ornrocha.logutils.messagecomponents.LogMessageCenter;
+import pt.ornrocha.rtools.installutils.components.RPackageInfo;
+
+public final class RDendrogram extends RPlotFigureMakerLibrary{
+
+	private IRHClustFunction hclustfunction;
+	private boolean calculatedistances=false;
+	private double cex=0.9;
+	private double labcex=0.8;
+	private String ylab="Height";
+	//private String title="Dissimilarity = (1- Correlation)/2";
+	private String title="Cluster Dendrogram";
+	
+	public RDendrogram(IDataLoader inputdata, boolean calculatedistances) {
+		super(inputdata);
+		this.calculatedistances=calculatedistances;
+		if(!calculatedistances)
+			title="Dissimilarity = (1- Correlation)/2";
+	}
+	
+	public RDendrogram(IDataLoader inputdata, IRHClustFunction hclustfunction) {
+		super(inputdata);
+		this.hclustfunction=hclustfunction;
+	}
+	
+
+	@Override
+	public void configure() throws Exception {
+	   if(hclustfunction==null) {
+		   hclustfunction=new RHierarchicalclusterFunction(getRsession(),getDataREnvironmentSignature(),calculatedistances);  
+	   }
+	}
+
+	@Override
+	public boolean needsConfiguration() {
+		return true;
+	}
+
+	@Override
+	protected String[] getFunctionsToExecutePlot() {
+		String[] cmd=new String[4];
+		cmd[0]="dend <- as.dendrogram("+hclustfunction.executeFunction()+")";
+		cmd[1]="par(mar=c(3,3,3,7))";
+		cmd[2]="p <- plot(dend, type = \"rectangle\",main = \""+title+"\", ylab = \""+ylab+"\",  nodePar = "+getNodeParProperties()+", horiz = TRUE, hang=-1)";
+		cmd[3]="print(p)";
+		
+		return cmd;
+	}
+	
+	
+	protected String getNodeParProperties() {
+		
+		StringBuilder str=new StringBuilder();
+		str.append("list(");
+		str.append("lab.cex = "+String.valueOf(labcex)+", ");
+		str.append("cex = "+String.valueOf(cex));
+		str.append(")");
+		
+		return str.toString();
+	}
+
+	@Override
+	protected ArrayList<RPackageInfo> requiredLibraries() {
+		
+		return null;
+	}
+
+	@Override
+	protected ArrayList<String> removeRInputObjects() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+/*	@Override
+	protected boolean useSwingWorkerToExecution() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected SwingWorker<Boolean, Void> executeFunctionWithSwingWorker() {
+		// TODO Auto-generated method stub
+		return null;
+	}*/
+	
+	
+	public static void main(String[] args) throws IOException {
+		
+		LogMessageCenter.getLogger().setLogLevel(MTULogLevel.TRACE);
+		
+		DefaultDataframeContainer dataframe=new DefaultDataframeContainer();
+		
+		StringColumnRowNames rownames=new StringColumnRowNames().addInputs("asdasdadadsadsadsas","B1","C1","D1");
+		
+		DoubleDataColumn col1=DoubleDataColumn.createFromInputs("asdasdadadsadsadsas", 1,0.3,0.5,0.4);
+		DoubleDataColumn col2=DoubleDataColumn.createFromInputs("B1", 0.3,1,0.78,0.34);
+		DoubleDataColumn col3=DoubleDataColumn.createFromInputs("C1", 0.5,0.78,1,0.54);
+		DoubleDataColumn col4=DoubleDataColumn.createFromInputs("D1", 0.4,0.34,0.54,1);
+		
+		dataframe.appendDataColumnToDataframe(col1);
+		dataframe.appendDataColumnToDataframe(col2);
+		dataframe.appendDataColumnToDataframe(col3);
+		dataframe.appendDataColumnToDataframe(col4);
+		dataframe.setRowNames(rownames);
+		
+		RDendrogram dend=new RDendrogram(dataframe, false);
+		String folder=System.getProperty("java.io.tmpdir");
+		dend.saveFigureFilepath(FilenameUtils.concat(folder, "dendo"));
+		
+		dend.run();
+		
+		//dend.showPlot();
+		ImageViewer view=dend.getImageViewer();
+	
+		JFrame frame=new JFrame("Plot generated by ggplot");
+		frame.getContentPane().add(view.getComponent());
+		frame.setSize(800, 800);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		dend.endSession();
+	}
+
+	@Override
+	protected boolean removeRObjectsAfterExecution() {
+		return false;
+	}
+
+}

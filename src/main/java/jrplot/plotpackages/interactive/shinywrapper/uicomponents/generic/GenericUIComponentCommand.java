@@ -1,0 +1,49 @@
+/************************************************************************** 
+ * Orlando Rocha (ornrocha@gmail.com)
+ *
+ * This is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU Public License as published by 
+ * the Free Software Foundation, either version 3 of the License, or 
+ * (at your option) any later version. 
+ * 
+ * This code is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+ * GNU Public License for more details. 
+ * 
+ * You should have received a copy of the GNU Public License 
+ * along with this code. If not, see http://www.gnu.org/licenses/ 
+ *  
+ */
+package jrplot.plotpackages.interactive.shinywrapper.uicomponents.generic;
+
+import jrplot.plotpackages.interactive.shinywrapper.mainfunctions.UIShinyComponent;
+
+public class GenericUIComponentCommand implements UIShinyComponent{
+
+	private String uicommand;
+	
+	
+	
+	
+	public GenericUIComponentCommand(String uicmd) {
+		this.uicommand=uicmd;
+	}
+	
+	
+	@Override
+	public String getUICommand() {
+		return uicommand;
+	}
+	
+	
+	
+	
+	
+	
+	public static GenericUIComponentCommand defineCommand(String uicmd) {
+		GenericUIComponentCommand cmd=new GenericUIComponentCommand(uicmd);
+		return cmd;
+	}
+
+}
