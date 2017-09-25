@@ -27,9 +27,9 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.github.ornrocha</groupId>
+			<groupId>pt.ornrocha</groupId>
 			<artifactId>multiutils</artifactId>
-			<version>master-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>hu.kazocsaba</groupId>
@@ -107,9 +107,13 @@
 
 	<repositories>
 		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
-		</repository>
+        <id>git-ornrocha</id>
+        <url>https://github.com/ornrocha/thirdparty/raw/master/mvn-repo</url>
+        <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+        </snapshots>
+       </repository>
 	</repositories>
 
 </project>
