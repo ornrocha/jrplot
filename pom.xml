@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>pt.ornrocha</groupId>
 			<artifactId>multiutils</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>hu.kazocsaba</groupId>
@@ -107,13 +107,16 @@
 
 	<repositories>
 		<repository>
-        <id>git-ornrocha</id>
-        <url>https://github.com/ornrocha/thirdparty/raw/master/mvn-repo</url>
-        <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-        </snapshots>
-       </repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-ornrocha-mvn-repo</id>
+			<name>bintray</name>
+			<url>https://dl.bintray.com/ornrocha/mvn-repo</url>
+		</repository>
+		<!-- <repository> <id>git-ornrocha</id> <url>https://github.com/ornrocha/thirdparty/raw/master/mvn-repo</url> 
+			<snapshots> <enabled>true</enabled> <updatePolicy>always</updatePolicy> </snapshots> 
+			</repository> -->
 	</repositories>
 
 </project>
